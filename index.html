@@ -1,0 +1,675 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>AURA LUXE • Sistema Exclusivo de Gestão para Salão de Beleza</title>
+  <meta name="description" content="Aplicativo multi-módulos exclusivo para salão de beleza: Área do Cliente, Área do Profissional, Super ADM e Chat Integrado.">
+  <meta name="theme-color" content="#07090E">
+
+  <style>
+    :root {
+      --bg-darkest: #07090E;
+      --bg-body: #0B0E15;
+      --bg-surface: #121622;
+      --bg-surface-elevated: #171D2B;
+      --bg-card: #151A27;
+      --bg-card-hover: #1C2335;
+      --bg-input: #0D111A;
+
+      --gold-100: #FDF8E8;
+      --gold-200: #F7E7B5;
+      --gold-300: #ECC868;
+      --gold-400: #D4AF37;
+      --gold-500: #B88E18;
+      --gold-600: #8C6A0F;
+      --gold-gradient: linear-gradient(135deg, #F5D77F 0%, #D4AF37 50%, #A57D12 100%);
+      --gold-glow: 0 0 22px rgba(212, 175, 55, 0.28);
+
+      --rose-accent: #E0A899;
+      --text-main: #F1F5F9;
+      --text-muted: #94A3B8;
+      --text-dim: #64748B;
+
+      --border-subtle: rgba(255, 255, 255, 0.08);
+      --border-gold: rgba(212, 175, 55, 0.25);
+      --border-gold-strong: rgba(212, 175, 55, 0.55);
+
+      --status-scheduled-bg: rgba(234, 179, 8, 0.12);
+      --status-scheduled-text: #FACC15;
+      --status-scheduled-border: rgba(234, 179, 8, 0.3);
+
+      --status-progress-bg: rgba(56, 189, 248, 0.12);
+      --status-progress-text: #38BDF8;
+      --status-progress-border: rgba(56, 189, 248, 0.3);
+
+      --status-done-bg: rgba(16, 185, 129, 0.12);
+      --status-done-text: #34D399;
+      --status-done-border: rgba(16, 185, 129, 0.3);
+
+      --status-cancel-bg: rgba(239, 68, 68, 0.12);
+      --status-cancel-text: #F87171;
+      --status-cancel-border: rgba(239, 68, 68, 0.3);
+
+      --radius-sm: 8px;
+      --radius-md: 12px;
+      --radius-lg: 16px;
+      --radius-xl: 22px;
+
+      --shadow-sm: 0 2px 8px rgba(0, 0, 0, 0.3);
+      --shadow-md: 0 8px 24px rgba(0, 0, 0, 0.45);
+      --shadow-lg: 0 16px 40px rgba(0, 0, 0, 0.65);
+      --transition: all 0.22s cubic-bezier(0.16, 1, 0.3, 1);
+    }
+
+    * { box-sizing: border-box; margin: 0; padding: 0; font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif; -webkit-font-smoothing: antialiased; }
+    body { background-color: var(--bg-darkest); color: var(--text-main); min-height: 100vh; overflow-x: hidden; display: flex; flex-direction: column; }
+    
+    ::-webkit-scrollbar { width: 7px; height: 7px; }
+    ::-webkit-scrollbar-track { background: var(--bg-darkest); }
+    ::-webkit-scrollbar-thumb { background: #202738; border-radius: 4px; }
+
+    .btn { display: inline-flex; align-items: center; justify-content: center; gap: 8px; padding: 10px 18px; border-radius: var(--radius-md); font-size: 0.88rem; font-weight: 600; cursor: pointer; border: 1px solid transparent; transition: var(--transition); white-space: nowrap; text-decoration: none; }
+    .btn:active { transform: scale(0.98); }
+    .btn-gold { background: var(--gold-gradient); color: #0B0E14; box-shadow: 0 4px 14px rgba(212, 175, 55, 0.32); }
+    .btn-secondary { background: var(--bg-surface-elevated); color: var(--text-main); border-color: var(--border-subtle); }
+    .btn-outline-gold { background: transparent; color: var(--gold-300); border-color: var(--border-gold); }
+    .btn-danger { background: rgba(239, 68, 68, 0.12); color: #F87171; border-color: rgba(239, 68, 68, 0.28); }
+    .btn-whatsapp { background: rgba(37, 211, 102, 0.12); color: #25D366; border: 1px solid rgba(37, 211, 102, 0.3); }
+    .btn-sm { padding: 6px 12px; font-size: 0.8rem; }
+    .btn-icon { padding: 8px; }
+
+    .form-group { display: flex; flex-direction: column; gap: 6px; margin-bottom: 14px; }
+    .form-row { display: grid; grid-template-columns: 1fr 1fr; gap: 14px; }
+    @media (max-width: 600px) { .form-row { grid-template-columns: 1fr; } }
+    
+    label { font-size: 0.8rem; font-weight: 600; color: var(--text-muted); text-transform: uppercase; letter-spacing: 0.5px; }
+    label span { color: var(--gold-400); }
+    input, select, textarea { width: 100%; background: var(--bg-input); border: 1px solid var(--border-subtle); border-radius: var(--radius-md); padding: 11px 14px; font-size: 0.92rem; color: #FFFFFF; outline: none; transition: var(--transition); }
+    input:focus, select:focus, textarea:focus { border-color: var(--gold-400); box-shadow: 0 0 0 2px rgba(212, 175, 55, 0.22); }
+    select option { background: #121622; color: #FFFFFF; }
+    textarea { resize: vertical; min-height: 80px; }
+
+    .badge-status { display: inline-flex; align-items: center; gap: 5px; padding: 4px 10px; border-radius: 999px; font-size: 0.72rem; font-weight: 700; text-transform: uppercase; letter-spacing: 0.5px; }
+    .badge-agendado { background: var(--status-scheduled-bg); color: var(--status-scheduled-text); border: 1px solid var(--status-scheduled-border); }
+    .badge-em-atendimento { background: var(--status-progress-bg); color: var(--status-progress-text); border: 1px solid var(--status-progress-border); }
+    .badge-concluido { background: var(--status-done-bg); color: var(--status-done-text); border: 1px solid var(--status-done-border); }
+    .badge-cancelado { background: var(--status-cancel-bg); color: var(--status-cancel-text); border: 1px solid var(--status-cancel-border); }
+
+    #screen-role-selection { min-height: 100vh; display: flex; flex-direction: column; align-items: center; justify-content: center; padding: 24px; background: radial-gradient(circle at 50% 20%, rgba(212, 175, 55, 0.08) 0%, transparent 60%), var(--bg-darkest); }
+    .portal-hero { text-align: center; margin-bottom: 40px; max-width: 600px; }
+    .portal-emblem { width: 70px; height: 70px; background: var(--gold-gradient); border-radius: 20px; margin: 0 auto 16px; display: flex; align-items: center; justify-content: center; box-shadow: var(--gold-glow); color: #07090E; }
+    .portal-title { font-size: 2rem; font-weight: 800; color: #FFFFFF; background: linear-gradient(180deg, #FFFFFF 0%, #F5DE88 100%); -webkit-background-clip: text; -webkit-text-fill-color: transparent; }
+    .portal-subtitle { font-size: 0.95rem; color: var(--text-muted); margin-top: 8px; }
+    .roles-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(290px, 1fr)); gap: 22px; width: 100%; max-width: 1040px; }
+    .role-card { background: var(--bg-card); border: 1px solid var(--border-gold); border-radius: var(--radius-xl); padding: 32px 26px; display: flex; flex-direction: column; align-items: center; text-align: center; cursor: pointer; transition: var(--transition); position: relative; box-shadow: var(--shadow-md); }
+    .role-card:hover { transform: translateY(-6px); border-color: var(--gold-400); box-shadow: var(--shadow-lg), var(--gold-glow); background: var(--bg-card-hover); }
+    .role-icon-box { width: 60px; height: 60px; border-radius: 16px; background: rgba(212, 175, 55, 0.12); color: var(--gold-300); display: flex; align-items: center; justify-content: center; margin-bottom: 20px; border: 1px solid var(--border-gold); }
+    .role-name { font-size: 1.25rem; font-weight: 700; color: #FFFFFF; margin-bottom: 8px; }
+    .role-desc { font-size: 0.88rem; color: var(--text-muted); line-height: 1.5; margin-bottom: 22px; flex: 1; }
+    .role-badge { font-size: 0.76rem; text-transform: uppercase; letter-spacing: 1px; font-weight: 700; padding: 6px 14px; border-radius: 999px; background: rgba(255, 255, 255, 0.05); color: var(--gold-200); border: 1px solid var(--border-subtle); }
+
+    .module-topbar { height: 70px; background: rgba(18, 22, 34, 0.85); backdrop-filter: blur(16px); border-bottom: 1px solid var(--border-subtle); padding: 0 24px; display: flex; align-items: center; justify-content: space-between; position: sticky; top: 0; z-index: 50; }
+    .module-topbar-left { display: flex; align-items: center; gap: 14px; }
+    .current-role-pill { display: inline-flex; align-items: center; gap: 8px; background: rgba(212, 175, 55, 0.1); border: 1px solid var(--border-gold); padding: 6px 12px; border-radius: 999px; font-size: 0.82rem; font-weight: 600; color: var(--gold-200); }
+    .module-topbar-right { display: flex; align-items: center; gap: 12px; }
+    .module-view { display: none; min-height: 100vh; flex-direction: column; }
+    .module-view.active { display: flex; }
+
+    .client-container, .prof-container { max-width: 1000px; margin: 0 auto; padding: 24px; width: 100%; }
+    .client-header-card { background: var(--bg-card); border: 1px solid var(--border-gold); border-radius: var(--radius-xl); padding: 24px 28px; margin-bottom: 24px; display: flex; align-items: center; justify-content: space-between; flex-wrap: wrap; gap: 16px; }
+    .client-nav-tabs { display: flex; gap: 10px; margin-bottom: 22px; border-bottom: 1px solid var(--border-subtle); padding-bottom: 12px; overflow-x: auto; }
+    .client-tab-btn { background: transparent; border: none; color: var(--text-muted); font-size: 0.95rem; font-weight: 600; padding: 8px 16px; border-radius: var(--radius-md); cursor: pointer; display: flex; align-items: center; gap: 8px; }
+    .client-tab-btn.active { background: rgba(212, 175, 55, 0.15); color: var(--gold-300); border: 1px solid var(--border-gold); }
+
+    .services-selection-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(260px, 1fr)); gap: 14px; margin-top: 10px; }
+    .service-select-card { background: var(--bg-surface); border: 1px solid var(--border-subtle); border-radius: var(--radius-lg); padding: 16px; cursor: pointer; transition: var(--transition); display: flex; flex-direction: column; justify-content: space-between; }
+    .service-select-card.selected { border-color: var(--gold-400); background: rgba(212, 175, 55, 0.1); box-shadow: 0 0 16px rgba(212, 175, 55, 0.2); }
+
+    .time-slots-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(85px, 1fr)); gap: 8px; margin-top: 10px; }
+    .time-slot-chip { background: var(--bg-surface); border: 1px solid var(--border-subtle); border-radius: var(--radius-sm); padding: 8px 4px; font-size: 0.85rem; font-weight: 600; color: var(--text-main); text-align: center; cursor: pointer; }
+    .time-slot-chip.selected { background: var(--gold-gradient); color: #07090E; border-color: var(--gold-400); font-weight: 700; }
+    .time-slot-chip.booked { opacity: 0.4; cursor: not-allowed; background: rgba(239, 68, 68, 0.08); border-color: rgba(239, 68, 68, 0.2); text-decoration: line-through; }
+
+    .prof-kpis-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(210px, 1fr)); gap: 16px; margin-bottom: 24px; }
+    .prof-kpi-card { background: var(--bg-card); border: 1px solid var(--border-subtle); border-radius: var(--radius-lg); padding: 20px; }
+    .prof-kpi-card h4 { font-size: 1.6rem; font-weight: 800; color: #FFFFFF; margin-top: 6px; }
+
+    .admin-wrapper { display: flex; min-height: 100vh; width: 100%; }
+    .admin-sidebar { width: 275px; height: 100vh; position: sticky; top: 0; background: var(--bg-surface); border-right: 1px solid var(--border-gold); display: flex; flex-direction: column; flex-shrink: 0; z-index: 60; }
+    .admin-brand { padding: 22px 20px; display: flex; align-items: center; gap: 12px; border-bottom: 1px solid var(--border-subtle); }
+    .admin-brand-icon { width: 40px; height: 40px; background: var(--gold-gradient); border-radius: 12px; display: flex; align-items: center; justify-content: center; color: #07090E; }
+    .admin-nav { padding: 16px 12px; display: flex; flex-direction: column; gap: 6px; flex: 1; overflow-y: auto; }
+    .admin-nav-item { display: flex; align-items: center; gap: 12px; padding: 12px 14px; border-radius: var(--radius-md); color: var(--text-muted); font-size: 0.9rem; font-weight: 600; cursor: pointer; border: 1px solid transparent; text-decoration: none; }
+    .admin-nav-item:hover { background: var(--bg-surface-elevated); color: #FFFFFF; }
+    .admin-nav-item.active { background: rgba(212, 175, 55, 0.14); color: var(--gold-300); border-color: var(--border-gold); }
+    .admin-nav-item svg { width: 18px; height: 18px; }
+    .admin-sidebar-footer { padding: 16px; border-top: 1px solid var(--border-subtle); background: var(--bg-surface-elevated); }
+    .admin-content-area { flex: 1; min-width: 0; padding: 24px 28px; background: var(--bg-body); padding-bottom: 80px; }
+
+    @media (max-width: 950px) {
+      .admin-wrapper { flex-direction: column; }
+      .admin-sidebar { width: 100%; height: auto; position: relative; border-right: none; border-bottom: 1px solid var(--border-gold); }
+      .admin-nav { flex-direction: row; overflow-x: auto; padding: 10px; }
+      .admin-content-area { padding: 16px; }
+    }
+
+    .adm-subview { display: none; }
+    .adm-subview.active { display: block; }
+    .table-box { background: var(--bg-card); border: 1px solid var(--border-subtle); border-radius: var(--radius-lg); overflow: hidden; margin-top: 14px; }
+    .table-responsive { overflow-x: auto; width: 100%; }
+    table { width: 100%; border-collapse: collapse; text-align: left; }
+    th { background: var(--bg-surface-elevated); color: var(--gold-200); font-size: 0.78rem; text-transform: uppercase; font-weight: 700; padding: 14px 18px; border-bottom: 1px solid var(--border-subtle); }
+    td { padding: 14px 18px; border-bottom: 1px solid var(--border-subtle); font-size: 0.88rem; color: var(--text-main); }
+    tr:hover td { background: rgba(255, 255, 255, 0.02); }
+
+    .modal-backdrop { position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0, 0, 0, 0.78); backdrop-filter: blur(8px); display: flex; align-items: center; justify-content: center; z-index: 1000; opacity: 0; pointer-events: none; transition: opacity 0.22s ease; padding: 16px; }
+    .modal-backdrop.open { opacity: 1; pointer-events: all; }
+    .modal-box { background: var(--bg-surface); border: 1px solid var(--border-gold); border-radius: var(--radius-xl); width: 100%; max-width: 550px; max-height: 90vh; overflow-y: auto; }
+    .modal-header { padding: 18px 24px; border-bottom: 1px solid var(--border-subtle); display: flex; align-items: center; justify-content: space-between; }
+    .modal-header h3 { font-size: 1.15rem; color: #FFFFFF; font-weight: 700; }
+    .modal-close { background: none; border: none; color: var(--text-muted); cursor: pointer; font-size: 1.4rem; }
+    .modal-body { padding: 22px 24px; }
+    .modal-footer { padding: 16px 24px; border-top: 1px solid var(--border-subtle); display: flex; align-items: center; justify-content: flex-end; gap: 12px; }
+
+    .floating-chat-trigger { position: fixed; bottom: 24px; right: 24px; width: 60px; height: 60px; border-radius: 50%; background: var(--gold-gradient); box-shadow: var(--shadow-lg), var(--gold-glow); display: flex; align-items: center; justify-content: center; cursor: pointer; z-index: 999; border: none; color: #07090E; }
+    .chat-drawer { position: fixed; bottom: 96px; right: 24px; width: 360px; max-width: calc(100vw - 48px); height: 520px; max-height: calc(100vh - 120px); background: var(--bg-surface); border: 1px solid var(--border-gold); border-radius: var(--radius-xl); z-index: 999; display: none; flex-direction: column; overflow: hidden; }
+    .chat-drawer.open { display: flex; }
+    .chat-header { padding: 16px; background: var(--bg-surface-elevated); border-bottom: 1px solid var(--border-subtle); display: flex; align-items: center; justify-content: space-between; }
+    .chat-messages { flex: 1; padding: 16px; overflow-y: auto; display: flex; flex-direction: column; gap: 12px; background: var(--bg-card); }
+    .chat-bubble { max-width: 82%; padding: 10px 14px; border-radius: var(--radius-md); font-size: 0.85rem; line-height: 1.4; }
+    .chat-bubble.mine { align-self: flex-end; background: var(--gold-gradient); color: #07090E; font-weight: 500; }
+    .chat-bubble.theirs { align-self: flex-start; background: var(--bg-surface-elevated); border: 1px solid var(--border-subtle); color: #FFFFFF; }
+    .chat-input-bar { padding: 12px; background: var(--bg-surface-elevated); border-top: 1px solid var(--border-subtle); display: flex; gap: 8px; }
+
+    .toast-container { position: fixed; top: 24px; right: 24px; z-index: 2000; display: flex; flex-direction: column; gap: 8px; pointer-events: none; }
+    .toast { background: var(--bg-surface-elevated); border: 1px solid var(--border-gold); padding: 12px 18px; border-radius: var(--radius-md); color: #FFFFFF; font-size: 0.88rem; display: flex; align-items: center; gap: 10px; pointer-events: all; }
+  </style>
+</head>
+<body>
+
+  <section id="screen-role-selection">
+    <div class="portal-hero">
+      <div class="portal-emblem">
+        <svg width="34" height="34" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="6" cy="6" r="3"></circle><circle cx="6" cy="18" r="3"></circle><line x1="20" y1="4" x2="8.12" y2="15.88"></line><line x1="14.47" y1="14.48" x2="20" y2="20"></line><line x1="8.12" y1="8.12" x2="12" y2="12"></line></svg>
+      </div>
+      <h1 class="portal-title" id="portal-salon-name">AURA LUXE STUDIO</h1>
+      <p class="portal-subtitle">Selecione o seu perfil de acesso para entrar no sistema exclusivo.</p>
+    </div>
+
+    <div class="roles-grid">
+      <div class="role-card" onclick="app.selectRole('cliente')">
+        <div class="role-icon-box"><svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"></path><circle cx="12" cy="7" r="4"></circle></svg></div>
+        <h2 class="role-name">Área do Cliente</h2>
+        <p class="role-desc">Agende serviços online, escolha profissional e visualize seus horários marcados.</p>
+        <span class="role-badge">Auto-Agendamento</span>
+      </div>
+
+      <div class="role-card" onclick="app.selectRole('profissional')">
+        <div class="role-icon-box"><svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="6" cy="6" r="3"></circle><circle cx="6" cy="18" r="3"></circle><line x1="20" y1="4" x2="8.12" y2="15.88"></line></svg></div>
+        <h2 class="role-name">Área do Profissional</h2>
+        <p class="role-desc">Visão exclusiva dos atendimentos do dia, controle de status e cálculo de comissões.</p>
+        <span class="role-badge">Agenda Restrita & Ganhos</span>
+      </div>
+
+      <div class="role-card" onclick="app.selectRole('admin')">
+        <div class="role-icon-box"><svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 2l3.09 6.26L22 9.27l-5 4.87 1.18 6.88L12 17.77l-6.18 3.25L7 14.14 2 9.27l6.91-1.01L12 2z"></path></svg></div>
+        <h2 class="role-name">Super Administrador</h2>
+        <p class="role-desc">Gestão global com Menu Lateral 9:16, relatórios financeiros, fluxo de caixa e equipe.</p>
+        <span class="role-badge">Controle Total</span>
+      </div>
+    </div>
+  </section>
+
+  <section id="module-cliente" class="module-view">
+    <header class="module-topbar">
+      <div class="module-topbar-left"><div class="current-role-pill"><span id="client-topbar-name">Cliente</span></div></div>
+      <div class="module-topbar-right">
+        <button class="btn btn-whatsapp btn-sm" onclick="app.contactSalonWhatsApp()">WhatsApp</button>
+        <button class="btn btn-secondary btn-sm" onclick="app.exitToRoleSelection()">Trocar Perfil</button>
+      </div>
+    </header>
+    <div class="client-container">
+      <div class="client-header-card">
+        <div>
+          <h2 id="client-greeting" style="font-size: 1.5rem; color: #FFFFFF;">Olá!</h2>
+          <p style="font-size: 0.88rem; color: var(--text-muted); margin-top: 2px;">Faça seu auto-agendamento em tempo real.</p>
+        </div>
+        <button class="btn btn-gold" onclick="app.showClientTab('booking')">+ Novo Agendamento</button>
+      </div>
+      <div class="client-nav-tabs">
+        <button class="client-tab-btn active" id="tab-btn-client-booking" onclick="app.showClientTab('booking')">Agendar</button>
+        <button class="client-tab-btn" id="tab-btn-client-myapps" onclick="app.showClientTab('myapps')">Meus Horários (<span id="client-upcoming-count">0</span>)</button>
+      </div>
+      <div id="client-tab-booking">
+        <div style="background: var(--bg-card); border: 1px solid var(--border-gold); border-radius: var(--radius-xl); padding: 26px;">
+          <h3 style="color: #FFFFFF; margin-bottom: 10px;">1. Escolha o Serviço</h3>
+          <div class="services-selection-grid" id="client-services-cards"></div>
+          <div style="margin-top: 26px;">
+            <h3 style="color: #FFFFFF; margin-bottom: 10px;">2. Profissional e Data</h3>
+            <div class="form-row">
+              <div class="form-group"><label>Profissional</label><select id="client-prof-select" onchange="app.renderClientAvailableSlots()"><option value="">Qualquer</option></select></div>
+              <div class="form-group"><label>Data</label><input type="date" id="client-date-picker" onchange="app.renderClientAvailableSlots()"></div>
+            </div>
+          </div>
+          <div style="margin-top: 15px;"><label>3. Horários Disponíveis</label><div class="time-slots-grid" id="client-time-slots"></div></div>
+          <div style="margin-top: 15px;" class="form-group"><label>Observações</label><input type="text" id="client-booking-notes" placeholder="Preferências..."></div>
+          <div style="margin-top: 20px; display: flex; justify-content: flex-end;"><button class="btn btn-gold" onclick="app.confirmClientBooking()">Confirmar Agendamento</button></div>
+        </div>
+      </div>
+      <div id="client-tab-myapps" style="display: none;">
+        <div id="client-appointments-list" style="display: flex; flex-direction: column; gap: 14px;"></div>
+      </div>
+    </div>
+  </section>
+
+  <section id="module-profissional" class="module-view">
+    <header class="module-topbar">
+      <div class="module-topbar-left"><div class="current-role-pill"><span id="prof-topbar-name">Profissional</span></div></div>
+      <div class="module-topbar-right"><button class="btn btn-secondary btn-sm" onclick="app.exitToRoleSelection()">Trocar Perfil</button></div>
+    </header>
+    <div class="prof-container">
+      <div style="background: var(--bg-card); border: 1px solid var(--border-gold); border-radius: var(--radius-xl); padding: 22px 26px; margin-bottom: 24px; display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 14px;">
+        <div>
+          <h2 id="prof-greeting" style="color: #FFFFFF;">Agenda</h2>
+          <p id="prof-role-subtitle" style="font-size: 0.85rem; color: var(--text-muted);">-</p>
+        </div>
+        <div style="display: flex; gap: 10px;"><input type="date" id="prof-date-picker" onchange="app.renderProfModule()"><button class="btn btn-outline-gold btn-sm" onclick="app.setProfToday()">Hoje</button></div>
+      </div>
+      <div class="prof-kpis-grid">
+        <div class="prof-kpi-card"><span>Comissões (Hoje)</span><h4 id="prof-kpi-earnings-today" style="color: #34D399;">R$ 0,00</h4></div>
+        <div class="prof-kpi-card"><span>Previsão (Hoje)</span><h4 id="prof-kpi-projected-today" style="color: var(--gold-300);">R$ 0,00</h4></div>
+        <div class="prof-kpi-card"><span>Atendimentos</span><h4 id="prof-kpi-clients-count">0</h4></div>
+        <div class="prof-kpi-card"><span>Taxa</span><h4 id="prof-kpi-commission-rate" style="color: var(--rose-accent);">50%</h4></div>
+      </div>
+      <div id="prof-appointments-list" style="display: flex; flex-direction: column; gap: 14px;"></div>
+    </div>
+  </section>
+
+  <section id="module-admin" class="module-view">
+    <div class="admin-wrapper">
+      <aside class="admin-sidebar">
+        <div class="admin-brand">
+          <div class="admin-brand-icon">👑</div>
+          <div><h2 style="font-size: 1.05rem; color: #FFFFFF;">SUPER ADM</h2><span style="font-size: 0.7rem; color: var(--gold-300);">Gestão 9:16</span></div>
+        </div>
+        <nav class="admin-nav">
+          <a class="admin-nav-item active" data-subview="agenda" onclick="app.switchAdmView('agenda')">Agenda Equipe</a>
+          <a class="admin-nav-item" data-subview="clientes" onclick="app.switchAdmView('clientes')">Clientes</a>
+          <a class="admin-nav-item" data-subview="caixa" onclick="app.switchAdmView('caixa')">Caixa & Financeiro</a>
+          <a class="admin-nav-item" data-subview="servicos" onclick="app.switchAdmView('servicos')">Serviços</a>
+          <a class="admin-nav-item" data-subview="equipe" onclick="app.switchAdmView('equipe')">Equipe</a>
+          <a class="admin-nav-item" data-subview="relatorios" onclick="app.switchAdmView('relatorios')">Relatórios</a>
+          <a class="admin-nav-item" data-subview="backup" onclick="app.switchAdmView('backup')">Backup</a>
+        </nav>
+        <div class="admin-sidebar-footer"><button class="btn btn-secondary btn-sm" style="width: 100%;" onclick="app.exitToRoleSelection()">Sair</button></div>
+      </aside>
+      <main class="admin-content-area">
+        <div id="adm-view-agenda" class="adm-subview active">
+          <div style="display: flex; justify-content: space-between; flex-wrap: wrap; gap: 14px; margin-bottom: 22px;">
+            <div style="display: flex; gap: 10px;">
+              <button class="btn btn-secondary btn-icon" onclick="app.changeAdmAgendaDate(-1)">❮</button>
+              <button class="btn btn-outline-gold btn-sm" onclick="app.setAdmAgendaToday()">Hoje</button>
+              <button class="btn btn-secondary btn-icon" onclick="app.changeAdmAgendaDate(1)">❯</button>
+              <input type="date" id="adm-agenda-date" onchange="app.renderAdmAgenda()">
+            </div>
+            <div style="display: flex; gap: 10px;">
+              <select id="adm-filter-prof" onchange="app.renderAdmAgenda()"><option value="all">Toda a Equipe</option></select>
+              <button class="btn btn-gold" onclick="app.openNewAppointmentModal()">+ Novo</button>
+            </div>
+          </div>
+          <div id="adm-agenda-cards-container" style="display: grid; grid-template-columns: repeat(auto-fill, minmax(330px, 1fr)); gap: 16px;"></div>
+        </div>
+
+        <div id="adm-view-clientes" class="adm-subview">
+          <div style="display: flex; justify-content: space-between; margin-bottom: 16px; flex-wrap: wrap; gap: 12px;">
+            <input type="text" id="adm-search-client" placeholder="Buscar cliente..." oninput="app.renderAdmClients()" style="max-width: 380px;">
+            <button class="btn btn-gold" onclick="app.openNewClientModal()">+ Novo Cliente</button>
+          </div>
+          <div class="table-box"><div class="table-responsive"><table><thead><tr><th>Cliente</th><th>WhatsApp</th><th>Visitas</th><th>Total</th><th style="text-align: right;">Ações</th></tr></thead><tbody id="adm-clients-tbody"></tbody></table></div></div>
+        </div>
+
+        <div id="adm-view-caixa" class="adm-subview">
+          <div style="display: flex; justify-content: space-between; margin-bottom: 20px; flex-wrap: wrap; gap: 12px;">
+            <h3 style="color: #FFFFFF;">Caixa & Entradas</h3>
+            <button class="btn btn-gold btn-sm" onclick="app.openNewTransactionModal()">+ Lançar Caixa</button>
+          </div>
+          <div class="prof-kpis-grid" style="grid-template-columns: repeat(auto-fit, minmax(210px, 1fr));">
+            <div class="prof-kpi-card" style="border-left: 4px solid #34D399;"><span>Entradas</span><h4 id="adm-fin-inflow" style="color: #34D399;">R$ 0,00</h4></div>
+            <div class="prof-kpi-card" style="border-left: 4px solid var(--gold-400);"><span>Pendentes</span><h4 id="adm-fin-pending" style="color: var(--gold-300);">R$ 0,00</h4></div>
+            <div class="prof-kpi-card" style="border-left: 4px solid #F87171;"><span>Despesas</span><h4 id="adm-fin-expenses" style="color: #F87171;">R$ 0,00</h4></div>
+            <div class="prof-kpi-card" style="border-left: 4px solid #38BDF8;"><span>Líquido</span><h4 id="adm-fin-net">R$ 0,00</h4></div>
+          </div>
+          <div class="table-box"><div class="table-responsive"><table><thead><tr><th>Data</th><th>Descrição</th><th>Forma</th><th>Tipo</th><th>Valor</th></tr></thead><tbody id="adm-finance-tbody"></tbody></table></div></div>
+        </div>
+
+        <div id="adm-view-servicos" class="adm-subview">
+          <div style="display: flex; justify-content: space-between; margin-bottom: 16px;"><h3 style="color: #FFFFFF;">Serviços</h3><button class="btn btn-gold btn-sm" onclick="app.openNewServiceModal()">+ Adicionar</button></div>
+          <div class="table-box"><div class="table-responsive"><table><thead><tr><th>Nome</th><th>Duração</th><th>Preço</th></tr></thead><tbody id="adm-services-tbody"></tbody></table></div></div>
+        </div>
+
+        <div id="adm-view-equipe" class="adm-subview">
+          <div style="display: flex; justify-content: space-between; margin-bottom: 16px;"><h3 style="color: #FFFFFF;">Equipe</h3><button class="btn btn-gold btn-sm" onclick="app.openNewProfModal()">+ Adicionar</button></div>
+          <div class="table-box"><div class="table-responsive"><table><thead><tr><th>Nome</th><th>Cargo</th><th>Comissão</th></tr></thead><tbody id="adm-equipe-tbody"></tbody></table></div></div>
+        </div>
+
+        <div id="adm-view-relatorios" class="adm-subview">
+          <h3 style="color: #FFFFFF; margin-bottom: 16px;">Relatório de Comissões</h3>
+          <div class="table-box"><div class="table-responsive"><table><thead><tr><th>Profissional</th><th>Atendimentos</th><th>Faturamento</th><th>A Pagar</th></tr></thead><tbody id="adm-reports-tbody"></tbody></table></div></div>
+        </div>
+
+        <div id="adm-view-backup" class="adm-subview">
+          <div style="max-width: 720px; display: flex; flex-direction: column; gap: 20px;">
+            <div style="background: var(--bg-card); border: 1px solid var(--border-gold); border-radius: var(--radius-xl); padding: 24px;">
+              <h3 style="color: #FFFFFF; margin-bottom: 8px;">Backup no Navegador</h3>
+              <p style="font-size: 0.88rem; color: var(--text-muted); margin-bottom: 18px;">Guarde os dados localmente em JSON.</p>
+              <button class="btn btn-gold" onclick="app.exportDatabase()">Exportar Backup</button>
+            </div>
+          </div>
+        </div>
+      </main>
+    </div>
+  </section>
+
+  <button class="floating-chat-trigger" onclick="app.toggleChat()">💬</button>
+  <div class="chat-drawer" id="chat-drawer">
+    <div class="chat-header"><h4>Atendimento</h4><button class="modal-close" onclick="app.toggleChat()">&times;</button></div>
+    <div class="chat-messages" id="chat-messages-container"></div>
+    <form class="chat-input-bar" onsubmit="app.handleSendMessage(event)"><input type="text" id="chat-input" placeholder="Mensagem..." required><button type="submit" class="btn btn-gold btn-sm">Enviar</button></form>
+  </div>
+
+  <div class="modal-backdrop" id="modal-select-client-profile">
+    <div class="modal-box" style="max-width: 440px;">
+      <div class="modal-header"><h3>Identificar Cliente</h3><button class="modal-close" onclick="app.closeModal('modal-select-client-profile')">&times;</button></div>
+      <div class="modal-body">
+        <div class="form-group"><label>Selecionar Cliente</label><select id="select-active-client"></select></div>
+        <p style="text-align:center; font-size:0.8rem; color:var(--text-dim); margin:12px 0;">OU NOVO CADASTRO:</p>
+        <div class="form-group"><label>Nome</label><input type="text" id="new-quick-client-name" placeholder="Nome"></div>
+        <div class="form-group"><label>WhatsApp</label><input type="tel" id="new-quick-client-phone" placeholder="Telefone"></div>
+      </div>
+      <div class="modal-footer"><button class="btn btn-gold" onclick="app.confirmClientProfile()">Entrar</button></div>
+    </div>
+  </div>
+
+  <div class="modal-backdrop" id="modal-select-prof-profile">
+    <div class="modal-box" style="max-width: 440px;">
+      <div class="modal-header"><h3>Identificar Profissional</h3><button class="modal-close" onclick="app.closeModal('modal-select-prof-profile')">&times;</button></div>
+      <div class="modal-body"><div class="form-group"><label>Usuário</label><select id="select-active-prof"></select></div></div>
+      <div class="modal-footer"><button class="btn btn-gold" onclick="app.confirmProfProfile()">Entrar</button></div>
+    </div>
+  </div>
+
+  <div class="toast-container" id="toast-container"></div>
+
+  <script>
+    const SEED_DATA = {
+      salon: { name: "Aura Luxe Studio Hair", phone: "(11) 98765-4321" },
+      professionals: [
+        { id: "prof-1", name: "Juliana Albuquerque", role: "Master Colorista", commission: 50 },
+        { id: "prof-2", name: "Gabriel Siqueira", role: "Hair Stylist", commission: 50 }
+      ],
+      services: [
+        { id: "srv-1", name: "Corte Feminino", price: 160.00, duration: "60 min" },
+        { id: "srv-2", name: "Coloração Global", price: 290.00, duration: "1h30" },
+        { id: "srv-3", name: "Mechas Balayage", price: 580.00, duration: "3h30" }
+      ],
+      clients: [
+        { id: "cli-1", name: "Mariana Prado Ramos", phone: "11981234567", email: "mariana@exemplo.com", notes: "" }
+      ],
+      appointments: [],
+      transactions: [],
+      messages: [{ id: "msg-1", senderRole: "Recepção", senderName: "Aura Luxe", text: "Olá! Como podemos ajudar?", time: "09:00", timestamp: new Date().toISOString() }]
+    };
+
+    function getTodayStr() {
+      const d = new Date();
+      return `${d.getFullYear()}-${String(d.getMonth() + 1).padStart(2, '0')}-${String(d.getDate()).padStart(2, '0')}`;
+    }
+
+    class MultiModuleSalonApp {
+      constructor() {
+        this.storageKey = 'aura_luxe_multimodule_db_v1';
+        this.currentRole = null;
+        this.activeClientId = null;
+        this.activeProfId = null;
+        this.selectedClientServiceId = null;
+        this.selectedClientSlot = null;
+        this.admSelectedDate = getTodayStr();
+        this.db = this.loadDB();
+        this.initDOM();
+      }
+
+      loadDB() {
+        try {
+          const item = localStorage.getItem(this.storageKey);
+          if (item) return JSON.parse(item);
+        } catch(e) {}
+        return JSON.parse(JSON.stringify(SEED_DATA));
+      }
+
+      saveDB() {
+        localStorage.setItem(this.storageKey, JSON.stringify(this.db));
+      }
+
+      initDOM() {
+        document.getElementById("portal-salon-name").innerText = this.db.salon.name.toUpperCase();
+        document.getElementById("adm-agenda-date").value = this.admSelectedDate;
+        this.renderChatMessages();
+      }
+
+      selectRole(role) {
+        if (role === 'cliente') {
+          document.getElementById("select-active-client").innerHTML = this.db.clients.map(c => `<option value="${c.id}">${c.name}</option>`).join('');
+          this.openModal("modal-select-client-profile");
+        } else if (role === 'profissional') {
+          document.getElementById("select-active-prof").innerHTML = this.db.professionals.map(p => `<option value="${p.id}">${p.name} (${p.role})</option>`).join('');
+          this.openModal("modal-select-prof-profile");
+        } else if (role === 'admin') {
+          this.currentRole = 'admin';
+          this.showScreen('module-admin');
+          this.renderAdmAgenda();
+        }
+      }
+
+      confirmClientProfile() {
+        const name = document.getElementById("new-quick-client-name").value.trim();
+        const phone = document.getElementById("new-quick-client-phone").value.trim();
+        if (name && phone) {
+          const newCli = { id: 'cli-' + Date.now(), name, phone, email: "", notes: "" };
+          this.db.clients.push(newCli);
+          this.saveDB();
+          this.activeClientId = newCli.id;
+        } else {
+          this.activeClientId = document.getElementById("select-active-client").value;
+        }
+        this.closeModal("modal-select-client-profile");
+        this.currentRole = 'cliente';
+        this.showScreen('module-cliente');
+        this.initClientModule();
+      }
+
+      confirmProfProfile() {
+        this.activeProfId = document.getElementById("select-active-prof").value;
+        const prof = this.db.professionals.find(p => p.id === this.activeProfId);
+        this.closeModal("modal-select-prof-profile");
+        this.currentRole = 'profissional';
+        document.getElementById("prof-topbar-name").innerText = prof ? prof.name : "Profissional";
+        document.getElementById("prof-date-picker").value = getTodayStr();
+        this.showScreen('module-profissional');
+        this.renderProfModule();
+      }
+
+      exitToRoleSelection() {
+        this.currentRole = null;
+        this.showScreen('screen-role-selection');
+      }
+
+      showScreen(screenId) {
+        document.getElementById("screen-role-selection").style.display = 'none';
+        document.querySelectorAll('.module-view').forEach(m => m.classList.remove('active'));
+        if (screenId === 'screen-role-selection') {
+          document.getElementById("screen-role-selection").style.display = 'flex';
+        } else {
+          document.getElementById(screenId).classList.add('active');
+        }
+      }
+
+      initClientModule() {
+        this.showClientTab('booking');
+        document.getElementById("client-services-cards").innerHTML = this.db.services.map(s => `
+          <div class="service-select-card" id="srv-card-${s.id}" onclick="app.selectClientService('${s.id}')">
+            <h4 style="color: #FFFFFF;">${s.name}</h4>
+            <div style="font-size: 1.15rem; font-weight: 800; color: var(--gold-300); margin-top: 10px;">R$ ${s.price.toFixed(2)}</div>
+          </div>`).join('');
+        document.getElementById("client-prof-select").innerHTML = '<option value="">Qualquer</option>' + this.db.professionals.map(p => `<option value="${p.id}">${p.name}</option>`).join('');
+        document.getElementById("client-date-picker").value = getTodayStr();
+        this.renderClientAvailableSlots();
+      }
+
+      showClientTab(tabName) {
+        document.getElementById("client-tab-booking").style.display = tabName === 'booking' ? 'block' : 'none';
+        document.getElementById("client-tab-myapps").style.display = tabName === 'myapps' ? 'block' : 'none';
+        document.getElementById("tab-btn-client-booking").classList.toggle('active', tabName === 'booking');
+        document.getElementById("tab-btn-client-myapps").classList.toggle('active', tabName === 'myapps');
+        if (tabName === 'myapps') this.renderClientMyAppointments();
+      }
+
+      selectClientService(id) {
+        this.selectedClientServiceId = id;
+        document.querySelectorAll('.service-select-card').forEach(c => c.classList.remove('selected'));
+        document.getElementById(`srv-card-${id}`).classList.add('selected');
+      }
+
+      renderClientAvailableSlots() {
+        const date = document.getElementById("client-date-picker").value;
+        const slots = ["09:00", "10:00", "11:00", "14:00", "15:00", "16:00", "17:00"];
+        const booked = this.db.appointments.filter(a => a.date === date && a.status !== 'Cancelado').map(a => a.time);
+        document.getElementById("client-time-slots").innerHTML = slots.map(t => `
+          <div class="time-slot-chip ${booked.includes(t) ? 'booked' : ''} ${this.selectedClientSlot === t ? 'selected' : ''}" onclick="${booked.includes(t) ? '' : `app.selectClientSlot('${t}')`}">${t}</div>`).join('');
+      }
+
+      selectClientSlot(t) { this.selectedClientSlot = t; this.renderClientAvailableSlots(); }
+
+      confirmClientBooking() {
+        if (!this.selectedClientServiceId || !this.selectedClientSlot) return alert("Selecione serviço e horário!");
+        const service = this.db.services.find(s => s.id === this.selectedClientServiceId);
+        this.db.appointments.push({
+          id: 'app-' + Date.now(), clientId: this.activeClientId, serviceId: this.selectedClientServiceId,
+          professionalId: this.db.professionals[0].id, date: document.getElementById("client-date-picker").value,
+          time: this.selectedClientSlot, price: service.price, status: "Agendado", notes: ""
+        });
+        this.saveDB();
+        this.selectedClientSlot = null;
+        this.showClientTab('myapps');
+      }
+
+      renderClientMyAppointments() {
+        const apps = this.db.appointments.filter(a => a.clientId === this.activeClientId);
+        document.getElementById("client-upcoming-count").innerText = apps.filter(a => a.status === 'Agendado').length;
+        document.getElementById("client-appointments-list").innerHTML = apps.map(a => {
+          const s = this.db.services.find(srv => srv.id === a.serviceId) || {};
+          return `<div style="background:var(--bg-card); padding:16px; border-radius:12px; display:flex; justify-content:space-between; align-items:center;">
+            <div><strong>${s.name || 'Serviço'}</strong><br><span style="font-size:0.8rem; color:var(--text-muted);">${a.date} às ${a.time}</span></div>
+            <span class="badge-status badge-agendado">${a.status}</span></div>`;
+        }).join('') || '<p style="color:var(--text-muted);">Nenhum agendamento.</p>';
+      }
+
+      renderProfModule() {
+        const date = document.getElementById("prof-date-picker").value || getTodayStr();
+        const apps = this.db.appointments.filter(a => a.professionalId === this.activeProfId && a.date === date);
+        const revenue = apps.filter(a => a.status === 'Concluído').reduce((acc, a) => acc + a.price, 0);
+        document.getElementById("prof-kpi-earnings-today").innerText = `R$ ${(revenue * 0.5).toFixed(2)}`;
+        document.getElementById("prof-kpi-clients-count").innerText = apps.length;
+        document.getElementById("prof-appointments-list").innerHTML = apps.map(a => `<div style="background:var(--bg-card); padding:16px; border-radius:12px;">${a.time} - R$ ${a.price}</div>`).join('') || '<p style="color:var(--text-muted);">Sem atendimentos hoje.</p>';
+      }
+
+      switchAdmView(v) {
+        document.querySelectorAll('.admin-nav-item').forEach(el => el.classList.toggle('active', el.getAttribute('data-subview') === v));
+        document.querySelectorAll('.adm-subview').forEach(sub => sub.classList.remove('active'));
+        document.getElementById(`adm-view-${v}`).classList.add('active');
+        if (v === 'agenda') this.renderAdmAgenda();
+        if (v === 'clientes') this.renderAdmClients();
+        if (v === 'caixa') this.renderAdmFinance();
+      }
+
+      renderAdmAgenda() {
+        const apps = this.db.appointments.filter(a => a.date === this.admSelectedDate);
+        document.getElementById("adm-agenda-cards-container").innerHTML = apps.map(a => `<div style="background:var(--bg-card); padding:16px; border-radius:12px;">${a.time} - R$ ${a.price}</div>`).join('') || '<p style="color:var(--text-muted);">Nenhum agendamento nesta data.</p>';
+      }
+
+      renderAdmClients() {
+        document.getElementById("adm-clients-tbody").innerHTML = this.db.clients.map(c => `<tr><td>${c.name}</td><td>${c.phone}</td><td>0</td><td>R$ 0,00</td></tr>`).join('');
+      }
+
+      renderAdmFinance() {
+        const total = this.db.transactions.reduce((acc, t) => acc + t.amount, 0);
+        document.getElementById("adm-fin-inflow").innerText = `R$ ${total.toFixed(2)}`;
+        document.getElementById("adm-finance-tbody").innerHTML = this.db.transactions.map(t => `<tr><td>${t.date}</td><td>${t.description}</td><td>${t.paymentMethod}</td><td>Entrada</td><td>R$ ${t.amount}</td></tr>`).join('');
+      }
+
+      toggleChat() { document.getElementById("chat-drawer").classList.toggle('open'); }
+      renderChatMessages() {
+        document.getElementById("chat-messages-container").innerHTML = this.db.messages.map(m => `<div class="chat-bubble theirs">${m.text}</div>`).join('');
+      }
+      handleSendMessage(e) {
+        e.preventDefault();
+        const input = document.getElementById("chat-input");
+        this.db.messages.push({ id: 'msg-' + Date.now(), text: input.value, time: "Agora" });
+        this.saveDB();
+        input.value = '';
+        this.renderChatMessages();
+      }
+
+      openModal(id) { document.getElementById(id).classList.add('open'); }
+      closeModal(id) { document.getElementById(id).classList.remove('open'); }
+      exportDatabase() {
+        const dataStr = "data:text/json;charset=utf-8," + encodeURIComponent(JSON.stringify(this.db));
+        const dlAnchor = document.createElement('a');
+        dlAnchor.setAttribute("href", dataStr);
+        dlAnchor.setAttribute("download", "aura_luxe_backup.json");
+        dlAnchor.click();
+      }
+
+      openNewAppointmentModal() {
+        alert("Para agendar novos horários rapidamente, utilize a Área do Cliente ou o menu de auto-agendamento!");
+      }
+      openNewClientModal() {
+        const name = prompt("Nome completo da nova cliente:");
+        if (!name) return;
+        const phone = prompt("WhatsApp / Telemóvel (ex: 11988887777):") || "";
+        this.db.clients.push({ id: 'cli-' + Date.now(), name, phone, email: "", notes: "Cadastrada pelo Super ADM" });
+        this.saveDB();
+        this.renderAdmClients();
+        alert("Cliente cadastrada com sucesso!");
+      }
+      openNewServiceModal() {
+        const name = prompt("Nome do novo serviço:");
+        if (!name) return;
+        const price = Number(prompt("Preço em Reais (ex: 150):") || 0);
+        this.db.services.push({ id: 'srv-' + Date.now(), name, price, duration: "45 min" });
+        this.saveDB();
+        alert("Serviço cadastrado!");
+      }
+      openNewProfModal() {
+        const name = prompt("Nome do novo profissional:");
+        if (!name) return;
+        const role = prompt("Especialidade / Cargo:") || "Hair Stylist";
+        this.db.professionals.push({ id: 'prof-' + Date.now(), name, role, commission: 50 });
+        this.saveDB();
+        alert("Profissional cadastrado!");
+      }
+      openNewTransactionModal() {
+        const desc = prompt("Descrição da entrada no caixa (ex: Venda de Produto):");
+        if (!desc) return;
+        const amount = Number(prompt("Valor (R$):") || 0);
+        this.db.transactions.push({ id: 'tx-' + Date.now(), description: desc, amount, type: "inflow", paymentMethod: "PIX", date: getTodayStr() });
+        this.saveDB();
+        this.renderAdmFinance();
+        alert("Lançamento efetuado no caixa!");
+      }
+    }
+
+    const app = new MultiModuleSalonApp();
+  </script>
+</body>
+</html>
